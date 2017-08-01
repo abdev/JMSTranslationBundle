@@ -52,12 +52,12 @@
 
     <h2>Available Messages</h2>
 
-    {% if newMessages is not empty %}
+    {% if newMessages.totalItems %}
     <h3>New Messages</h3>
     {% include "JMSTranslationBundle:Translate:messages.html.twig" with {"messages": newMessages} %}
     {% endif %}
 
-    {% if existingMessages is not empty %}
+    {% if existingMessages.totalItems %}
     <h3>Existing Messages</h3>
     {% include "JMSTranslationBundle:Translate:messages.html.twig" with {"messages": existingMessages} %}
     {% endif %}

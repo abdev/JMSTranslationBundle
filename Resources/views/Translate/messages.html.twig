@@ -7,7 +7,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for id, message in messages %}
+            {% for id, message in messages.paginatedRecords %}
             <tr>
                 <td>
                     <a class="jms-translation-anchor" id="{{ id }}" />
@@ -59,3 +59,6 @@
             {% endfor %}
         </tbody>
     </table>
+{% from 'JMSTranslationBundle:Translate:pagination.html.twig' import paginationList %}	
+{{ paginationList(messages) }}
+

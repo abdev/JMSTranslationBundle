@@ -1,0 +1,50 @@
+{% macro paginationList(pagination) %}
+    
+{% if pagination.pagesCount > 1 %}
+    
+{% set route = app.request.attributes.get('_route') %}
+{% set query = app.request.query.all %}
+
+<div class="module pagination">
+    <ul>
+    {% block previous %}
+        {% if pagination.previous is not null %}
+            <li class="previous">
+            	<a href="{{ path(route, query|merge({'page': pagination.previous})) }}">&#9668;</a>
+            </li>
+        {% else %}
+            <li class="is-disabled previous">
+                <a href="#">&#9668;</a>
+            </li>
+        {% endif %}
+    {% endblock previous %}
+
+    {% for page in range(1, pagination.pagesCount) %}
+        {% if page != pagination.currentPage %}
+            <li>
+                <a href="{{ path(route, query|merge({'page': page})) }}">{{ page }}</a>
+            </li>
+        {% else %}
+            <li class="is-active">
+                <a href="{{ path(route, query|merge({'page': page})) }}">{{ page }}</a>
+            </li>
+        {% endif %}
+
+    {% endfor %}
+
+    {% block next %}
+        {% if pagination.next is not null %}
+            <li class="next">
+                <a href="{{ path(route, query|merge({'page': pagination.next})) }}">&#9658;</a>
+            </li>
+        {% else %}
+            <li class="is-disabled next">
+                <a href="#">&#9658;</a>
+            </li>
+        {% endif %}
+    {% endblock next %}
+    </ul>
+</div>
+{% endif %}
+
+{% endmacro %}   

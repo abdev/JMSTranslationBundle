@@ -61,6 +61,9 @@ class TranslateController
      */
     public function indexAction(Request $request)
     {
+        $currentPage = $request->query->get('page', 1);
+        $perPage     = 100;
+        
         $configs = $this->configFactory->getNames();
         $config = $request->query->get('config') ?: reset($configs);
         if (!$config) {
@@ -122,6 +125,8 @@ class TranslateController
 
             $existingMessages[$id] = $message;
         }
+        $existingMessages = $this->calculatePageParams($existingMessages, $currentPage, $perPage);
+        $newMessages = $this->calculatePageParams($newMessages, $currentPage, $perPage);
 
         return array(
             'selectedConfig' => $config,
@@ -139,4 +144,26 @@ class TranslateController
             'sourceLanguage' => $this->sourceLanguage,
         );
     }
+    
+    protected function calculatePageParams($resultSet, $currentPage, $perPage)
+    {
+        $totalResults = count($resultSet);
+        
+        $pagesCount = ceil($totalResults/ $perPage);
+        
+        $offset = $perPage*($currentPage - 1);
+        $paginatedResults = array_slice ($resultSet , $offset, $perPage, true);
+        
+        $result = array(
+            'paginatedRecords' => $paginatedResults,
+            'totalItems'       => $totalResults,
+            'pagesCount'       => $pagesCount,
+            'currentPage'      => $currentPage,
+            'next'             => $currentPage == $pagesCount ? null : $currentPage + 1,
+            'previous'         => $currentPage == 1 ? null : $currentPage - 1,
+        );
+        
+        return $result;
+    }
+
 }
