@@ -175,12 +175,8 @@ class FileExtractor implements ExtractorInterface, LoggerAwareInterface
         $this->pattern = $pattern;
     }
 
-    /**
-     * @return MessageCatalogue
-     * @throws \Exception
-     */
-    public function extract()
-    {
+    public function extract($locale = '')
+    {         
         if (!empty($this->removingTwigVisitor)) {
             $this->removingTwigVisitor->setEnabled(false);
         }
@@ -203,10 +199,13 @@ class FileExtractor implements ExtractorInterface, LoggerAwareInterface
         }
 
         $curTwigLoader = $this->twig->getLoader();
-        $this->twig->setLoader(new \Twig_Loader_Array(array()));
+        $this->twig->setLoader(new \Twig_Loader_String());
 
         try {
             $catalogue = new MessageCatalogue();
+            if ($locale) {
+                $catalogue->setLocale($locale);
+            }
             foreach ($finder as $file) {
                 $visitingMethod = 'visitFile';
                 $visitingArgs = array($file, $catalogue);
@@ -217,17 +216,16 @@ class FileExtractor implements ExtractorInterface, LoggerAwareInterface
                     $extension = substr($file, $pos + 1);
 
                     if ('php' === $extension) {
-                        try {
+                       try {
                             $ast = $this->phpParser->parse(file_get_contents($file));
                         } catch (Error $ex) {
                             throw new \RuntimeException(sprintf('Could not parse "%s": %s', $file, $ex->getMessage()), $ex->getCode(), $ex);
                         }
-
                         $visitingMethod = 'visitPhpFile';
                         $visitingArgs[] = $ast;
-                    } elseif ('twig' === $extension) {
+                    } else if ('twig' === $extension) {
                         $visitingMethod = 'visitTwigFile';
-                        $visitingArgs[] = $this->twig->parse($this->twig->tokenize(new \Twig_Source(file_get_contents($file), (string) $file)));
+                        $visitingArgs[] = $this->twig->parse($this->twig->tokenize(file_get_contents($file), (string) $file));
                     }
                 }
 
