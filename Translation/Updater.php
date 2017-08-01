@@ -250,7 +250,7 @@ class Updater
         $this->extractor->setEnabledExtractors($config->getEnabledExtractors());
 
         $this->logger->info("Extracting translation keys");
-        $this->scannedCatalogue = $this->extractor->extract();
+        $this->scannedCatalogue = $this->extractor->extract($config->getLocale());
         $this->scannedCatalogue->setLocale($config->getLocale());
 
         // merge existing messages into scanned messages

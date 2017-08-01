@@ -127,14 +127,17 @@ class ExtractorManager implements ExtractorInterface
     /**
      * @return \JMS\TranslationBundle\Model\MessageCatalogue
      */
-    public function extract()
+    public function extract($locale = '')
     {
         $catalogue = new MessageCatalogue();
+        if ($locale) {
+            $catalogue->setLocale($locale);
+        }
 
         foreach ($this->directories as $directory) {
             $this->logger->info(sprintf('Extracting messages from directory : %s', $directory));
             $this->fileExtractor->setDirectory($directory);
-            $catalogue->merge($this->fileExtractor->extract());
+            $catalogue->merge($this->fileExtractor->extract($locale));
         }
 
         foreach ($this->customExtractors as $alias => $extractor) {
@@ -145,7 +148,7 @@ class ExtractorManager implements ExtractorInterface
 
             $this->logger->info(sprintf('Extracting messages with custom extractor : %s', $alias));
 
-            $catalogue->merge($extractor->extract());
+            $catalogue->merge($extractor->extract($locale));
         }
 
         return $catalogue;
