@@ -121,7 +121,8 @@ class TranslateController
         $newMessages = $existingMessages = array();
         foreach ($catalogue->getDomain($domain)->all() as $id => $message) {
             if (!empty($search)) {
-                if (strpos(strtolower($message->getSourceString()), $searchNormalized) === false) {
+                if (strpos(strtolower($message->getSourceString()), $searchNormalized) === false
+                    && strpos(strtolower($message->getLocaleString()), $searchNormalized) === false) {
                     continue;  
                 }
             } 
