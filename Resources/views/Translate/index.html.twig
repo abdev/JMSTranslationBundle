@@ -31,6 +31,12 @@
             <option value="{{ locale }}"{% if locale == selectedLocale %} selected="selected"{% endif %}>{{ locale }}</option>
             {% endfor %}
         </select>
+        <div class="input-group span7">
+            <input type="text" class="form-control" placeholder="Search for..." name="search">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Go!</button>
+            </span>
+        </div><!-- /input-group -->
     </form>
 
     {% if isWriteable is same as(false) %}

@@ -62,7 +62,9 @@ class TranslateController
     public function indexAction(Request $request)
     {
         $currentPage = $request->query->get('page', 1);
-        $perPage     = 100;
+        $search      = $request->query->get('search', 1);
+        $searchNormalized = strtolower($search); 
+        $perPage     = 35;
         
         $configs = $this->configFactory->getNames();
         $config = $request->query->get('config') ?: reset($configs);
@@ -118,6 +120,11 @@ class TranslateController
 
         $newMessages = $existingMessages = array();
         foreach ($catalogue->getDomain($domain)->all() as $id => $message) {
+            if (!empty($search)) {
+                if (strpos(strtolower($message->getSourceString()), $searchNormalized) === false) {
+                    continue;  
+                }
+            } 
             if ($message->isNew()) {
                 $newMessages[$id] = $message;
                 continue;
@@ -126,7 +133,7 @@ class TranslateController
             $existingMessages[$id] = $message;
         }
         $existingMessages = $this->calculatePageParams($existingMessages, $currentPage, $perPage);
-        $newMessages = $this->calculatePageParams($newMessages, $currentPage, $perPage);
+        $newMessages      = $this->calculatePageParams($newMessages, $currentPage, $perPage);
 
         return array(
             'selectedConfig' => $config,
