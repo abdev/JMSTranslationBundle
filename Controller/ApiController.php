@@ -63,6 +63,10 @@ class ApiController
     public function updateMessageAction(Request $request, $config, $domain, $locale)
     {
         $id = $request->query->get('id');
+         
+        if (strpos($id, ':') != false) {
+            list($locale, $id) = explode(':', $id);
+        }
 
         $config = $this->configFactory->getConfig($config, $locale);
 

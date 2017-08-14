@@ -25,7 +25,8 @@
                         <h6>Alternative Translations</h6>
                         {% for locale, altMessage in alternativeMessages[id] %}
                         <p>
-                            <strong>{{ locale }}:</strong> <pre>{{ altMessage.localeString }}</pre>
+                            <strong>{{ locale }}:</strong>
+                            <textarea class="alternative_translations" name="alternative_translations[]" value="{{locale}}:{{ id }}" data-id="{{locale}}:{{ id }}">{{ altMessage.localeString }}</textarea>
                         </p>
                         {% endfor %}
                     {% endif %}
